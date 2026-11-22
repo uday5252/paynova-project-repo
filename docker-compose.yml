@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build: ./services/frontend
+    ports:
+      - "8000:8000"
+    environment:
+      API_GATEWAY_URL: http://api-gateway:8000
+    depends_on:
+      - api-gateway
+
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "8001:8000"
+    environment:
+      PAYMENT_SERVICE_URL: http://payment-service:8000
+      WALLET_SERVICE_URL: http://wallet-service:8000
+    depends_on:
+      - payment-service
+      - wallet-service
+
+  payment-service:
+    build: ./services/payment-service
+    environment:
+      WALLET_SERVICE_URL: http://wallet-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    depends_on:
+      - wallet-service
+      - notification-service
+
+  wallet-service:
+    build: ./services/wallet-service
+
+  notification-service:
+    build: ./services/notification-service
